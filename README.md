@@ -1,10 +1,10 @@
 # browse
 
-This script is a wrapper around tabbed and surf which manages cookies, cache,
-and initial URL. The simplest usage is to give the desired starting URL as the
-first argument and options for the browser following. More configuration is
-possible through environment variables and a configuration directory, described
-below.
+This script is a wrapper around [tabbed](http://tools.suckless.org/tabbed/) and
+[surf](http://surf.suckless.org/) which manages cookies, cache, and initial
+URL. The simplest usage is to give the desired starting URL as the first
+argument and options for the browser following. More configuration is possible
+through environment variables and a configuration directory, described below.
 
 In most configurations, the `browse` command will create a temporary directory
 in which the session's cookies and cache will be stored, and which will be
@@ -22,11 +22,11 @@ invoke configured behavior (see below).
 
 ## Environment Variables
 
-| Variable Name | Feature                                              |
-| ------------- | ---------------------------------------------------- |
-| `BROWSE_HOME` | URL to browse to, if not given on the command line   |
-| `BROWSE_DIR`  | Working directory, rather than a temporary directory |
-| `BROWSE_CFG`  | Configuration directory, instead of `~/.browse`      |
+| Variable Name  | Feature                                              |
+| -------------- | ---------------------------------------------------- |
+| `$BROWSE_HOME` | URL to browse to, if not given on the command line   |
+| `$BROWSE_DIR`  | Working directory, rather than a temporary directory |
+| `$BROWSE_CFG`  | Configuration directory, instead of `~/.browse`      |
 
 ## Configuration
 
@@ -46,5 +46,7 @@ command, your `~/.browse/save` might contain this line:
 github = /github\.com/
 ```
 This will save any lines from the cookie file which match that pattern for the
-next session.
+next session. The cookies are saved in the `$BROWSE_CFG/cookies` directory as
+the name of the command with a `.txt` extension, e.g.
+`~/.browse/cookies/github.txt`.
 
