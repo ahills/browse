@@ -1,0 +1,52 @@
+#!/bin/sh
+# Author: Andrew Hills <ahills@ednos.net>
+# Public Domain (see http://unlicense.org)
+
+pn="`basename "$0"`"
+config="${BROWSE_CFG:-$HOME/.browse}"
+
+# Configuration by program name
+urlsfile="$config/urls" # e.g. search = https://duckduckgo.com
+savefile="$config/save" # Saves matching cookies, e.g. search = /duckduckgo\.com/
+
+# Url selection:
+# 1. Command line
+# 2. ~/.browse/urls
+# 3. $BROWSE_HOME
+# 4. blank
+url="$1"
+[ -n "$1" ] && shift # Shift to pass the rest of the arguments to the browser
+[ -f "$urlsfile" -a -z "$url" ] && \
+    url="`sed -n 's/^'"$pn"' *= *\(.*\)$/\1/p' "$urlsfile"`"
+[ -z "$url" ] && url="${BROWSE_HOME}"
+echo "url=$url" >&2
+
+# Persistent cookie file selection:
+# 1. ~/.browse/save (if program name is listed, save cookies in
+#                    ~/.browse/cookies/programname.txt)
+# 2. $BROWSE_DIR/cookies.txt
+# 3. none
+cookiefile=
+[ -f "$savefile" ] && grep -q -w -e "^$pn" "$savefile" && \
+    cookiefile="$config/cookies/$pn.txt"
+t="${BROWSE_DIR:-`mktemp -d --tmpdir $pn-XXXXXX`}"
+[ -n "$cookiefile" -a -f "$cookiefile" ] && cp "$cookiefile" "$t/cookies.txt"
+echo "cookiefile=$cookiefile" >&2
+
+tabbed -n "browne-$pn" -c \
+    surf -c "$t/cookies.txt" -C "$t/cache/" "$@" -e > "$t/xid" 2> "$t/error.log" &
+sleep 1
+
+id="`cat "$t/xid"`"
+id="`xwininfo -children -id $id | sed -ne 's/^     \(0x[0-9a-f]*\) .*$/\1/p'`"
+xprop -id $id -f _SURF_GO 8s -set _SURF_GO "$url"
+
+wait; sleep 1
+if [ -n "$cookiefile" ]; then
+    savepattern="`sed -n 's/^'"$pn"' *= *\(.*\)$/\1/p' $savefile`"
+    echo "savepattern=$savepattern" >&2
+    mkdir -p "`dirname "$cookiefile"`"
+    sed -n "${savepattern}p" "$t/cookies.txt" > "$cookiefile"
+fi
+[ -z "$BROWSE_DIR" ] && rm -rf "$t" # Only erase the working directory if we created it
+
