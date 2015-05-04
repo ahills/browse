@@ -48,5 +48,6 @@ github = /github\.com/
 This will save any lines from the cookie file which match that pattern for the
 next session. The cookies are saved in the `$BROWSE_CFG/cookies` directory as
 the name of the command with a `.txt` extension, e.g.
-`~/.browse/cookies/github.txt`.
+`~/.browse/cookies/github.txt`. Note that the cookie save pattern is not read
+until needed, so it can be modified while `browse` is running.
 
