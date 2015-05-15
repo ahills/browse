@@ -52,3 +52,4 @@ the name of the command with a `.txt` extension, e.g.
 until needed, so it can be modified while `browse` is running, so long as a
 pattern exists.
 
+Copyright © 2015 Andrew Hills. See LICENSE for details.
