@@ -33,6 +33,7 @@ t="${BROWSE_DIR:-`mktemp -d --tmpdir $pn-XXXXXX`}"
 [ -n "$cookiefile" -a -f "$cookiefile" ] && cp "$cookiefile" "$t/cookies.txt"
 echo "cookiefile=$cookiefile" >&2
 
+cd "$t"
 tabbed -n "browne-$pn" -c \
     surf -c "$t/cookies.txt" -C "$t/cache/" "$@" -e > "$t/xid" 2> "$t/error.log" &
 sleep 1
