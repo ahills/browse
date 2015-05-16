@@ -7,8 +7,8 @@ argument and options for the browser following. More configuration is possible
 through environment variables and a configuration directory, described below.
 
 In most configurations, the `browse` command will create a temporary directory
-in which the session's cookies and cache will be stored, and which will be
-erased on exit.
+in which the session's cookies, cache, and downloads will be stored, and which
+will be erased on exit.
 
 It is intended for this script to be POSIX-compliant, or at least run on many
 different shells. It has only been tested on Linux with `dash` as `/bin/sh`, so
