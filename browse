@@ -29,7 +29,7 @@ echo "url=$url" >&2
 cookiefile=
 [ -f "$savefile" ] && grep -q -w -e "^$pn" "$savefile" && \
     cookiefile="$config/cookies/$pn.txt"
-t="${BROWSE_DIR:-`mktemp -d --tmpdir $pn-XXXXXX`}"
+t="${BROWSE_DIR:-`mktemp -d -t $pn-XXXXXX`}"
 [ -n "$cookiefile" -a -f "$cookiefile" ] && cp "$cookiefile" "$t/cookies.txt"
 echo "cookiefile=$cookiefile" >&2
 
