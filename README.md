@@ -18,7 +18,8 @@ does or doesn't work.
 ## Installation
 
 Just copy `browse` to somewhere on your path. Create links to the executable to
-invoke configured behavior (see below).
+invoke configured behavior (see below). `surf` should be patched with the
+included `surf-option-cachefolder.patch` file.
 
 ## Environment Variables
 
