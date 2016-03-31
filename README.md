@@ -1,8 +1,8 @@
 # browse
 
 This script is a wrapper around [tabbed](http://tools.suckless.org/tabbed/) and
-[surf](http://surf.suckless.org/) which manages cookies, cache, and initial
-URL. The simplest usage is to give the desired starting URL as the first
+[vimb](https://github.com/fanglingsu/vimb/) which manages cookies, cache, and
+initial URL. The simplest usage is to give the desired starting URL as the first
 argument and options for the browser following. More configuration is possible
 through environment variables and a configuration directory, described below.
 
@@ -18,8 +18,7 @@ does or doesn't work.
 ## Installation
 
 Just copy `browse` to somewhere on your path. Create links to the executable to
-invoke configured behavior (see below). `surf` should be patched with the
-included `surf-option-cachefolder.patch` file.
+invoke configured behavior (see below).
 
 ## Environment Variables
 
@@ -53,4 +52,4 @@ the name of the command with a `.txt` extension, e.g.
 until needed, so it can be modified while `browse` is running, so long as a
 pattern exists.
 
-Copyright © 2015 Andrew Hills. See LICENSE for details.
+Copyright © 2015-2016 Andrew Hills. See LICENSE for details.

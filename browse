@@ -4,6 +4,10 @@
 
 pn="`basename "$0"`"
 config="${BROWSE_CFG:-$HOME/.browse}"
+t="${BROWSE_DIR:-`mktemp -d -t $pn-XXXXXX`}"
+
+export XDG_CONFIG_HOME="$t" XDG_CACHE_HOME="$t/cache" XDG_RUNTIME_DIR="$t"
+mkdir -p "$XDG_CONFIG_HOME/vimb" "$XDG_CACHE_HOME"
 
 # Configuration by program name
 urlsfile="$config/urls" # e.g. search = https://duckduckgo.com
@@ -29,25 +33,25 @@ echo "url=$url" >&2
 cookiefile=
 [ -f "$savefile" ] && grep -q -w -e "^$pn" "$savefile" && \
     cookiefile="$config/cookies/$pn.txt"
-t="${BROWSE_DIR:-`mktemp -d -t $pn-XXXXXX`}"
-[ -n "$cookiefile" -a -f "$cookiefile" ] && cp "$cookiefile" "$t/cookies.txt"
+[ -n "$cookiefile" -a -f "$cookiefile" ] && cp "$cookiefile" "$t/vimb/cookies"
 echo "cookiefile=$cookiefile" >&2
 
 cd "$t"
 tabbed -n "browse-$pn" -c \
-    surf -c "$t/cookies.txt" -C "$t/cache/" "$@" -e > "$t/xid" 2> "$t/error.log" &
+	vimb -s "$@" -e > "$t/xid" 2> "$t/error.log" &
 sleep 1
 
-id="`cat "$t/xid"`"
-id="`xwininfo -children -id $id | sed -ne 's/^     \(0x[0-9a-f]*\) .*$/\1/p'`"
-xprop -id $id -f _SURF_GO 8s -set _SURF_GO "$url"
+# Only one socket should be created, with the PID
+ln -s "$t/vimb/socket/"* "$t/vimb.sock"
+
+[ -n "$url" ] && echo ":o $url<CR>" | socat - unix-connect:"$t/vimb.sock"
 
 wait; sleep 1
 if [ -n "$cookiefile" ]; then
     savepattern="`sed -n 's/^'"$pn"' *= *\(.*\)$/\1/p' $savefile`"
     echo "savepattern=$savepattern" >&2
     mkdir -p "`dirname "$cookiefile"`"
-    sed -n "${savepattern}p" "$t/cookies.txt" > "$cookiefile"
+    sed -n "${savepattern}p" "$t/vimb/cookies" > "$cookiefile"
 fi
 [ -z "$BROWSE_DIR" ] && rm -rf "$t" # Only erase the working directory if we created it
 
