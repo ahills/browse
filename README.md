@@ -52,4 +52,20 @@ the name of the command with a `.txt` extension, e.g.
 until needed, so it can be modified while `browse` is running, so long as a
 pattern exists.
 
+## Planned features
+
+- Better configuration format to support the following items
+- Specify more things to save from vimb's working directory:
+  - `bookmark` list
+  - `closed` window list
+  - `command` history
+  - `config` file
+  - browsing `history`
+  - deferred URL `queue`
+  - `search` history
+  - the known hosts file (`hsts`)
+  - custom `scripts.js` and `style.js`
+- Specify base directory & temporary directory template
+- Support other browsers (e.g., [surf](http://surf.suckless.org/)), if it can be done sensibly
+
 Copyright © 2015-2016 Andrew Hills. See LICENSE for details.

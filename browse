@@ -2,6 +2,14 @@
 # Author: Andrew Hills <ahills@ednos.net>
 # Public Domain (see http://unlicense.org)
 
+VERSION=0.1
+for arg; do
+	if [ "$arg" = -V ]; then
+		echo "browse-$VERSION" >&2
+		exit 1
+  fi
+done
+
 pn="`basename "$0"`"
 config="${BROWSE_CFG:-$HOME/.browse}"
 t="${BROWSE_DIR:-`mktemp -d -t $pn-XXXXXX`}"
