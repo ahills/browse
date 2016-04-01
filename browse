@@ -24,8 +24,7 @@ export XDG_CONFIG_HOME="$t" XDG_CACHE_HOME="$t/cache" XDG_RUNTIME_DIR="$t"
 mkdir -p "$XDG_CONFIG_HOME/vimb" "$XDG_CACHE_HOME"
 
 # Configuration by program name
-configfile="$config/$pn/config"
-[ -f "$configfile" ] || configfile="$config/$pn.cfg"
+configfile="$config/$pn.cfg"
 [ -f "$configfile" ] || configfile=
 [ -n "$configfile" ] && mkdir -p "$config/$pn"
 

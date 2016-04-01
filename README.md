@@ -40,13 +40,11 @@ invoke configured behavior (see below).
 Configuration goes in `$BROWSE_CFG`, or `~/.browse` by default. Profiles are
 invoked by launching `browse` with the profile name as the program name. The
 easiest way to accomplish this is usually to create symbolic links. A profile's
-configuration file is either a file named after the profile with `.cfg`
-appended, or a file named `config` in a directory named after the profile. For
-example, a `search` profile's configuration may be `$BROWSE_CFG/search.cfg` or
-`$BROWSE_CFG/search/config`. (The default profile, of course, would be called
-`browse`.) The configuration file uses a simple `key = value` format.
-Whitespace around the `=` will be ignored, but the key must not be preceded by
-whitespace.
+configuration file is named after the profile with `.cfg` appended. For example,
+a `search` profile's configuration would be `$BROWSE_CFG/search.cfg`. (The
+default profile, of course, would be called `browse`.) The configuration file
+uses a simple `key = value` format. Whitespace around the `=` will be ignored,
+but the key must not be preceded by whitespace.
 
 The `url` key determines the initial URL for the session when not provided on
 the command line. For example, the `search` profile may contain the following:
