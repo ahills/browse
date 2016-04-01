@@ -32,6 +32,7 @@ invoke configured behavior (see below).
 ## Command line flags
 
 `-P` prints the names of persisted files and exits.
+
 `-V` prints the version and exits.
 
 ## Configuration
@@ -52,7 +53,6 @@ the command line. For example, the `search` profile may contain the following:
 ```
 search = https://duckduckgo.com
 ```
-
 The other keys are names of files that `vimb` stores in its profile directory
 and copies into the working directory when launching a session. A complete list
 of files is obtained with `browse -P`. The value of the key may be `all`, to
