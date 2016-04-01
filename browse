@@ -3,7 +3,7 @@
 # Public Domain (see http://unlicense.org)
 
 # SAVEFILES can have sed patterns to filter contents while saving
-SAVEFILES='bookmark closed command config history queue search hsts'
+SAVEFILES='bookmark closed command config cookies history queue search hsts'
 # COPYFILES are always copied verbatim if present
 COPYFILES='scripts.js style.js'
 

@@ -56,9 +56,13 @@ and copies into the working directory when launching a session. A complete list
 of files is obtained with `browse -P`. The value of the key may be `all`, to
 copy the file verbatim to the profile directory after quitting; or it may be a
 regular expression used to filter the file. For example, to save only cookies
-from GitHub, the configuration file would contain the following:
+from GitHub, and all of the history, bookmarks, and queue, the configuration
+file would contain the following:
 ```
 cookies = /github\.com/
+history = all
+bookmarks = all
+queue = all
 ```
 Or, to save just the cookies needed to stay logged into GMail:
 ```
