@@ -2,24 +2,32 @@
 # Author: Andrew Hills <ahills@ednos.net>
 # Public Domain (see http://unlicense.org)
 
-VERSION=0.1
+# SAVEFILES can have sed patterns to filter contents while saving
+SAVEFILES='bookmark closed command config history queue search hsts'
+# COPYFILES are always copied verbatim if present
+COPYFILES='scripts.js style.js'
+
+VERSION=3
 for arg; do
-	if [ "$arg" = -V ]; then
-		echo "browse-$VERSION" >&2
-		exit 1
-  fi
+  case "$arg" in
+  -V) echo "browse-$VERSION" >&2; exit 1;;
+  -P) echo "save: $SAVEFILES"; echo "copy: $COPYFILES"; exit 1;;
+  esac
 done
 
 pn="`basename "$0"`"
 config="${BROWSE_CFG:-$HOME/.browse}"
 t="${BROWSE_DIR:-`mktemp -d -t $pn-XXXXXX`}"
+echo "cwd=$t" >&2
 
 export XDG_CONFIG_HOME="$t" XDG_CACHE_HOME="$t/cache" XDG_RUNTIME_DIR="$t"
 mkdir -p "$XDG_CONFIG_HOME/vimb" "$XDG_CACHE_HOME"
 
 # Configuration by program name
-urlsfile="$config/urls" # e.g. search = https://duckduckgo.com
-savefile="$config/save" # Saves matching cookies, e.g. search = /duckduckgo\.com/
+configfile="$config/$pn/config"
+[ -f "$configfile" ] || configfile="$config/$pn.cfg"
+[ -f "$configfile" ] || configfile=
+[ -n "$configfile" ] && mkdir -p "$config/$pn"
 
 # Url selection:
 # 1. Command line
@@ -28,25 +36,27 @@ savefile="$config/save" # Saves matching cookies, e.g. search = /duckduckgo\.com
 # 4. blank
 url="$1"
 [ -n "$1" ] && shift # Shift to pass the rest of the arguments to the browser
-[ -f "$urlsfile" -a -z "$url" ] && \
-    url="`sed -n 's/^'"$pn"' *= *\(.*\)$/\1/p' "$urlsfile"`"
+[ -n "$configfile" -a -z "$url" ] && \
+    url="`sed -n 's/^url *= *\(.*\)$/\1/p' "$configfile"`"
 [ -z "$url" ] && url="${BROWSE_HOME}"
 echo "url=$url" >&2
 
-# Persistent cookie file selection:
-# 1. ~/.browse/save (if program name is listed, save cookies in
-#                    ~/.browse/cookies/programname.txt)
-# 2. $BROWSE_DIR/cookies.txt
-# 3. none
-cookiefile=
-[ -f "$savefile" ] && grep -q -w -e "^$pn" "$savefile" && \
-    cookiefile="$config/cookies/$pn.txt"
-[ -n "$cookiefile" -a -f "$cookiefile" ] && cp "$cookiefile" "$t/vimb/cookies"
-echo "cookiefile=$cookiefile" >&2
+# Restore persistent files
+if [ -f "$configfile" ]; then
+  for pfile in $SAVEFILES; do
+    [ -f "$config/$pn/$pfile" ] && grep -q -w -e "^$pfile" "$configfile" && \
+      cp "$config/$pn/$pfile" "$t/vimb/$pfile" && echo "loaded $pfile" >&2
+  done
+
+  for pfile in $COPYFILES; do
+    [ -f "$config/$pn/$pfile" ] && \
+      cp "$config/$pn/$pfile" "$t/vimb/$pfile" && echo "loaded $pfile" >&2
+  done
+fi
 
 cd "$t"
 tabbed -n "browse-$pn" -c \
-	vimb -s "$@" -e > "$t/xid" 2> "$t/error.log" &
+  vimb -s "$@" -e > "$t/xid" 2> "$t/error.log" &
 sleep 1
 
 # Only one socket should be created, with the PID
@@ -55,11 +65,35 @@ ln -s "$t/vimb/socket/"* "$t/vimb.sock"
 [ -n "$url" ] && echo ":o $url<CR>" | socat - unix-connect:"$t/vimb.sock"
 
 wait; sleep 1
-if [ -n "$cookiefile" ]; then
-    savepattern="`sed -n 's/^'"$pn"' *= *\(.*\)$/\1/p' $savefile`"
-    echo "savepattern=$savepattern" >&2
-    mkdir -p "`dirname "$cookiefile"`"
-    sed -n "${savepattern}p" "$t/vimb/cookies" > "$cookiefile"
+
+# Save persistent files
+if [ -f "$configfile" ]; then
+  for pfile in $SAVEFILES; do
+    savepattern="`sed -n 's/^'"$pfile"' *= *\(.*\)$/\1/p' "$configfile"`"
+    [ -z "$savepattern" ] && continue
+    echo "save $pfile $savepattern"
+
+    # Back up original
+    [ -f "$config/$pn/$pfile" ] && mv -f "$config/$pn/$pfile" "$config/$pn/$pfile.bak"
+
+    # Special keyword "all" means just copy the whole file
+    if [ "$savepattern" = all ]; then
+      cp "$t/vimb/$pfile" "$config/$pn/$pfile"
+    else
+      sed -n "${savepattern}p" "$t/vimb/$pfile" > "$config/$pn/$pfile" && \
+        echo "saved $pfile" >&2
+    fi
+  done
+
+  for pfile in $COPYFILES; do
+    if [ -f "$t/vimb/$pfile" ]; then
+      # Back up original
+      [ -f "$config/$pn/$pfile" ] && mv -f "$config/$pn/$pfile" "$config/$pn/$pfile.bak"
+
+      cp "$t/vimb/$pfile" "$config/$pn/$pfile" && echo "saved $pfile" >&2
+    fi
+  done
 fi
+
 [ -z "$BROWSE_DIR" ] && rm -rf "$t" # Only erase the working directory if we created it
 
