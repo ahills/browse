@@ -20,7 +20,7 @@ config="${BROWSE_CFG:-$HOME/.browse}"
 t="${BROWSE_DIR:-`mktemp -d -t $pn-XXXXXX`}"
 echo "cwd=$t" >&2
 
-export XDG_CONFIG_HOME="$t" XDG_CACHE_HOME="$t/cache" XDG_RUNTIME_DIR="$t"
+export XDG_CONFIG_HOME="$t" XDG_CACHE_HOME="$t/cache" XDG_RUNTIME_DIR="$t" XDG_DATA_HOME="$t"
 mkdir -p "$XDG_CONFIG_HOME/vimb" "$XDG_CACHE_HOME"
 
 # Configuration by program name
