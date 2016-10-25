@@ -7,7 +7,7 @@ SAVEFILES='bookmark closed command config cookies history queue search hsts'
 # COPYFILES are always copied verbatim if present
 COPYFILES='scripts.js style.js'
 
-VERSION=4
+VERSION=5
 for arg; do
   case "$arg" in
   -V) echo "browse-$VERSION" >&2; exit 1;;
@@ -59,9 +59,13 @@ tabbed -n "browse-$pn" -c \
 sleep 1
 
 # Only one socket should be created, with the PID
-ln -s "$t/vimb/socket/"* "$t/vimb.sock"
+vimb_socket=
+for sockfile in "$t/vimb/socket/"*; do
+	vimb_socket="$sockfile"
+	break
+done
 
-[ -n "$url" ] && echo ":o $url<CR>" | socat - unix-connect:"$t/vimb.sock"
+[ -n "$url" ] && echo ":o $url<CR>" | socat - unix-connect:"$vimb_socket"
 
 wait; sleep 1
 
