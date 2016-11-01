@@ -5,9 +5,9 @@
 # SAVEFILES can have sed patterns to filter contents while saving
 SAVEFILES='bookmark closed command config cookies history queue search hsts'
 # COPYFILES are always copied verbatim if present
-COPYFILES='scripts.js style.js'
+COPYFILES='scripts.js style.css'
 
-VERSION=5
+VERSION=6
 for arg; do
   case "$arg" in
   -V) echo "browse-$VERSION" >&2; exit 1;;
